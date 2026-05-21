@@ -103,6 +103,4 @@ services:
 
 networks:
   backend_net:
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
+    driver: bridge
