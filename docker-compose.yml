@@ -13,81 +13,172 @@ services:
     networks:
       - backend_net
 
-  # First Nginx (Первый узел) — всегда существует
   nginx1:
     image: nginx:1.27.4-alpine
     container_name: nginx1
-    restart: unless-stopped    
+    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
     volumes:
-      - ./nginx/nginx-first.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+      - ./nginx/default.conf.template:/etc/nginx/template/default.conf.template:ro
+      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro
     ports:
       - "8081:80"
+    environment:
+      - NEXT_HOP=nginx2
+    command: >
+      sh -c "envsubst '$${NEXT_HOP}' < /etc/nginx/template/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     networks:
       - backend_net
-
-  # Промежуточные узлы (Генерируются в цикле, если nginx_count > 2)
   nginx2:
     image: nginx:1.27.4-alpine
     container_name: nginx2
-    restart: unless-stopped    
+    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
     volumes:
-      - ./nginx/nginx2.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+      - ./nginx/default.conf.template:/etc/nginx/template/default.conf.template:ro
+      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro
     ports:
       - "8082:80"
+    environment:
+      - NEXT_HOP=nginx3
+    command: >
+      sh -c "envsubst '$${NEXT_HOP}' < /etc/nginx/template/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     networks:
       - backend_net
   nginx3:
     image: nginx:1.27.4-alpine
     container_name: nginx3
-    restart: unless-stopped    
+    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
     volumes:
-      - ./nginx/nginx3.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+      - ./nginx/default.conf.template:/etc/nginx/template/default.conf.template:ro
+      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro
     ports:
       - "8083:80"
+    environment:
+      - NEXT_HOP=nginx4
+    command: >
+      sh -c "envsubst '$${NEXT_HOP}' < /etc/nginx/template/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     networks:
       - backend_net
   nginx4:
     image: nginx:1.27.4-alpine
     container_name: nginx4
-    restart: unless-stopped    
+    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
     volumes:
-      - ./nginx/nginx4.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+      - ./nginx/default.conf.template:/etc/nginx/template/default.conf.template:ro
+      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro
     ports:
       - "8084:80"
+    environment:
+      - NEXT_HOP=nginx5
+    command: >
+      sh -c "envsubst '$${NEXT_HOP}' < /etc/nginx/template/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     networks:
       - backend_net
-
-  # Замыкающий узел (Генерируется, если nginx_count > 1)
   nginx5:
     image: nginx:1.27.4-alpine
     container_name: nginx5
-    restart: unless-stopped    
+    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
     volumes:
-      - ./nginx/nginx-last.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+      - ./nginx/default.conf.template:/etc/nginx/template/default.conf.template:ro
+      - ./nginx/my-includes/:/etc/nginx/my-includes/:ro
     ports:
       - "8085:80"
+    environment:
+      - NEXT_HOP=app
+    command: >
+      sh -c "envsubst '$${NEXT_HOP}' < /etc/nginx/template/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     networks:
       - backend_net
+
+  # First Nginx (Первый узел) — всегда существует
+  #nginx1:
+  #  image: nginx:1.27.4-alpine
+  #  container_name: nginx1
+  #  restart: unless-stopped    
+  #  depends_on:
+  #    app:
+  #      condition: service_healthy
+  #  volumes:
+  #    - ./nginx/nginx-first.conf:/etc/nginx/conf.d/default.conf:ro
+  #    - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+  #  ports:
+  #    - "8081:80"
+  #  networks:
+  #    - backend_net
+
+  # Промежуточные узлы (Генерируются в цикле, если nginx_count > 2)
+  #nginx2:
+  #  image: nginx:1.27.4-alpine
+  #  container_name: nginx2
+  #  restart: unless-stopped    
+  #  depends_on:
+  #    app:
+  #      condition: service_healthy
+  #  volumes:
+  #    - ./nginx/nginx2.conf:/etc/nginx/conf.d/default.conf:ro
+  #    - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+  #  ports:
+  #    - "8082:80"
+  #  networks:
+  #    - backend_net
+  #nginx3:
+  #  image: nginx:1.27.4-alpine
+  #  container_name: nginx3
+  #  restart: unless-stopped    
+  #  depends_on:
+  #    app:
+  #      condition: service_healthy
+  #  volumes:
+  #    - ./nginx/nginx3.conf:/etc/nginx/conf.d/default.conf:ro
+  #    - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+  #  ports:
+  #    - "8083:80"
+  #  networks:
+  #    - backend_net
+  #nginx4:
+  #  image: nginx:1.27.4-alpine
+  #  container_name: nginx4
+  #  restart: unless-stopped    
+  #  depends_on:
+  #    app:
+  #      condition: service_healthy
+  #  volumes:
+  #    - ./nginx/nginx4.conf:/etc/nginx/conf.d/default.conf:ro
+  #    - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+  #  ports:
+  #    - "8084:80"
+  #  networks:
+  #    - backend_net
+
+  # Замыкающий узел (Генерируется, если nginx_count > 1)
+  #nginx5:
+  #  image: nginx:1.27.4-alpine
+  #  container_name: nginx5
+  #  restart: unless-stopped    
+  #  depends_on:
+  #    app:
+  #      condition: service_healthy
+  #  volumes:
+  #    - ./nginx/nginx-last.conf:/etc/nginx/conf.d/default.conf:ro
+  #    - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
+  #  ports:
+  #    - "8085:80"
+  #  networks:
+  #    - backend_net
 
   load_balancer:
     image: nginx:1.27.4-alpine
@@ -98,12 +189,14 @@ services:
     volumes:
       - ./nginx/load_balancer.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/my-includes/:/etc/nginx/my-includes/:ro      
-    depends_on:
-      - nginx1
-      - nginx2
-      - nginx3
-      - nginx4
-      - nginx5
+
+#    depends_on:
+##      - nginx1
+##      - nginx2
+##      - nginx3
+##      - nginx4
+##      - nginx5
+#
     networks:
       - backend_net
 

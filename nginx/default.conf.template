@@ -3,12 +3,12 @@ resolver 127.0.0.11 valid=1s;
 # Определяем, куда идем: на app или в цепочку, сделал 50/50, рандомно
 split_clients "${request_id}" $route {
     50%             "app";
-    *               "nginx4";
+    *               "${NEXT_HOP}";
 }
 
 map $http_x_internal_chain $dynamic_target {
     ""              $route;
-    "true"          "nginx4";
+    "true"          "${NEXT_HOP}";
 }
 
 map $dynamic_target $chain_header {
