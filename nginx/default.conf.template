@@ -6,7 +6,16 @@ split_clients "${request_id}" $route {
     *               "${NEXT_HOP}";
 }
 
-map $http_x_internal_chain $dynamic_target {
+# Определяем реальный ip-клиента
+include /etc/nginx/my-includes/geoip.conf;
+
+# Сбрасываем маркер, если запрос пришел снаружи
+map "$is_trusted:$http_x_internal_chain" $is_trusted_chain {
+    "1:true"        "true";
+    default         "";      
+}
+
+map $is_trusted_chain $dynamic_target {
     ""              $route;
     "true"          "${NEXT_HOP}";
 }
@@ -17,13 +26,10 @@ map $dynamic_target $chain_header {
 }
 
 # Определяем заголовок, ip клиента + ip конечного nginx или всей цепочки nginx
-map $http_x_internal_chain $final_x_forward_for {
+map $is_trusted_chain $final_x_forward_for {
     ""              "$remote_addr, $server_addr";
     "true"          "$http_x_forwarded_for, $server_addr";
 }
-
-# Определяем реальный ip-клиента
-include /etc/nginx/my-includes/geoip.conf;
 
 # Лимиты
 include /etc/nginx/my-includes/limit.conf;
