@@ -30,15 +30,55 @@
 ## 🚀 Установка и проверка на тестовом стенде
 <p align="right"><a href="#содержание">Наверх</a></p>
 
-* Устанавливаем docker compose, git (или скачиваем архивом)
-* Создаем и переходим в раздел, куда скачаем наш репозиторий
-* mkdir /docker/ && cd $_
-* git clone [https://github.com/serge-kenig/nginx-dynamic-chain.git](https://github.com/serge-kenig/nginx-dynamic-chain.git) (или распаковываем архив)
-* cd nginx-dynamic-chain/
-* docker compose up -d
-* Заходим и проверяем на nginx-ноды ip:80, ip:8081-8085
-* Если надо развернуть больше nginx-ноды, то запускаем скрипт generate_chain.sh
-* Для визуально теста в командной строке необходимо запустить test_protocol.sh или curl с нужными параметрами
+Устанавливаем docker compose, git
+  
+Создаем и переходим в раздел, куда хотим скачать наш репозиторий
+  
+```sh
+mkdir /docker/ && cd $_
+```
+
+Делаем клон
+
+```sh
+git clone https://github.com/serge-kenig/nginx-dynamic-chain #(или скачиваем архив и распаковываем его)
+```
+
+Заходим 
+
+```sh
+cd nginx-dynamic-chain/
+```
+
+Ставим
+
+```sh
+docker compose up -d
+```
+
+Заходим и проверяем на nginx-ноды ip:80, ip:8081-8085
+
+Если надо развернуть больше nginx-ноды, то запускаем скрипт:
+
+```sh
+./generate_chain.sh
+```
+
+Для визуально теста в командной строке необходимо запустить
+
+```sh
+./test_protocol.sh
+```
+
+или curl с нужными параметрами
+
+```sh
+curl -s localhost
+```
+
+```sh
+curl -s localhost:{8081..8085}
+```
 
 ## 📝 Протокол тестирования
 <p align="right"><a href="#содержание">Наверх</a></p>
