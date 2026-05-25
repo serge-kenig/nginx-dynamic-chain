@@ -50,7 +50,7 @@ git clone https://github.com/serge-kenig/nginx-dynamic-chain #(или скачи
 cd nginx-dynamic-chain/
 ```
 
-Ставим
+Запускаем цепочку nginx-нод
 
 ```sh
 docker compose up -d
