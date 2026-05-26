@@ -126,8 +126,13 @@ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}
 watch -n 0.5 ./test_protocol.sh
 ```
 
-https://github.com/user-attachments/assets/577c8652-e8c3-4d42-9bfb-2986003074bf
 
+<img width="800" height="838" alt="test-protocol" src="https://github.com/user-attachments/assets/d1827ce0-37bb-41c9-bb80-3610607aa04a" />
+
+
+<!--
+https://github.com/user-attachments/assets/577c8652-e8c3-4d42-9bfb-2986003074bf
+-->
 ⠀
 
 ### 💻 Примеры выводов через curl
